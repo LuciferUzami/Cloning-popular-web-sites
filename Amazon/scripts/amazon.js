@@ -4,7 +4,7 @@
 //
 let productsHTML = ""
 
-products.forEach((productObject, index) => {
+products.forEach((productObject) => {
   // Add all the products details 
   productsHTML += `<div class="product-container">
           <div class="product-image-container">
@@ -45,7 +45,7 @@ products.forEach((productObject, index) => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-added" data-img-source="${productObject.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -76,6 +76,18 @@ document.querySelectorAll('.js-add-to-cart').forEach((addbtn) => {
       existingProduct.quantity += 1
     }
 
+    // Accedently write correct code for Added image show
+    document.querySelectorAll('.js-added').forEach((addImg) => {
+      if (addImg.dataset.imgSource === productName) {
+        console.log(addImg.classList.remove('added-to-cart'))
+      
+        // Time 
+        setTimeout(() =>{
+          addImg.classList.add('added-to-cart')
+        }, 2000)
+      }
+    })
+    
     // Add total contenty
     let cartTotal = 0
     cart.forEach((item) => {
@@ -84,5 +96,6 @@ document.querySelectorAll('.js-add-to-cart').forEach((addbtn) => {
 
     // Show on cart logo
     document.querySelector('.js-cart-quantity').innerText = cartTotal
+
   })
 })
