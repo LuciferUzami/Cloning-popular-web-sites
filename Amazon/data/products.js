@@ -5,7 +5,7 @@ export const products = [
     names: "Black and Gray Athletic Cotton Socks - 6 Pairs",
     rating: {
       stars: 4.5,
-      count: 87
+      count: 87 
     },
     price: 1090,
     keywords: [
