@@ -1,5 +1,7 @@
 // 1. Save the data (data structure)
-
+// Import module
+import { cart, addTocart } from "../data/cart.js"
+import { products } from "../data/products.js"
 
 //
 let productsHTML = ""
@@ -58,23 +60,27 @@ products.forEach((productObject) => {
 
 document.querySelector('.js-products-grid').innerHTML = productsHTML
 
+
+// Update cart animation
+function updateCart() {
+    // Add total contenty
+    let cartTotal = 0
+    cart.forEach((item) => {
+      cartTotal += item.quantity
+      console.log(cartTotal)
+    })
+
+    // Show on cart logo
+    document.querySelector('.js-cart-quantity').innerText = cartTotal
+}
+
 // Add Button event
 document.querySelectorAll('.js-add-to-cart').forEach((addbtn) => {
   addbtn.addEventListener('click', () => {
     const productName = addbtn.dataset.productsId
 
-    //Using find() method 
-    let existingProduct = cart.find(item => item.name === productName)
-
-    // Condition
-    if (!existingProduct){
-      cart.push ({
-        name: productName,
-        quantity: 1
-      })  
-    }else {
-      existingProduct.quantity += 1
-    }
+    // Call the function
+    addTocart(productName)
 
     // Accedently write correct code for Added image show
     document.querySelectorAll('.js-added').forEach((addImg) => {
@@ -88,14 +94,8 @@ document.querySelectorAll('.js-add-to-cart').forEach((addbtn) => {
       }
     })
     
-    // Add total contenty
-    let cartTotal = 0
-    cart.forEach((item) => {
-      cartTotal += item.quantity
-    })
-
-    // Show on cart logo
-    document.querySelector('.js-cart-quantity').innerText = cartTotal
+    // Update care animation
+    updateCart()
 
   })
 })
