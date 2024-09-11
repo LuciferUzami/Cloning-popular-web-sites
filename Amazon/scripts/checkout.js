@@ -1,11 +1,14 @@
 import { cart, removeFromCart } from "../data/cart.js";
 import { products } from "../data/products.js";
+// Export exter default export code using url
+import dayjs  from "https://unpkg.com/dayjs@1.11.10/esm/index.js"
+// Store delivery option
+import { delvierOptions } from "../data/deliverOptions.js";
 
 let cartSummaryHTML = ''
-
 // loop
 function cartSlide() {
-  cart.forEach((cartItem, index) => {
+  cart.forEach((cartItem) => {
     const productId = cartItem.name
   
     let matchingId;
@@ -13,13 +16,12 @@ function cartSlide() {
     products.forEach((productData) => {
       if (productData.id === productId) {
         matchingId = productData
-        console.log(matchingId)
       }
     });
   
     // console.log(matchingId)
     cartSummaryHTML += `
-    <div class="cart-item-container js-item-id-${matchingId.id}">
+      <div class="cart-item-container js-item-id-${matchingId.id}">
             <div class="delivery-date">
               Delivery date: Tuesday, June 21
             </div>
@@ -52,50 +54,51 @@ function cartSlide() {
                 <div class="delivery-options-title">
                   Choose a delivery option:
                 </div>
-                <div class="delivery-option">
-                  <input type="radio" checked
-                    class="delivery-option-input"
-                    name="delivery-option-${index}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Tuesday, June 21
-                    </div>
-                    <div class="delivery-option-price">
-                      FREE Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${index}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Wednesday, June 15
-                    </div>
-                    <div class="delivery-option-price">
-                      ₹50 - Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${index}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Monday, June 13
-                    </div>
-                    <div class="delivery-option-price">
-                      ₹100 - Shipping
-                    </div>
-                  </div>
-                </div>
+
+                    ${deliveryOptionsHTML(matchingId.id, cartItem)}
+                  
               </div>
             </div>
-          </div>
+       </div>
     `
   });
+}
+
+// function for get HTML for set Delivery option
+function deliveryOptionsHTML(matchingProuct, cartItem) {
+  let html = ''
+
+  delvierOptions.forEach((deliveryOption) =>{
+    // Get today
+    const today = dayjs()
+    const deliveryDate = today.add(deliveryOption.deliveryDays, 'days')
+    const dateString = deliveryDate.format('dddd, MMMM D')
+
+    // Get price
+    const priceString = `${deliveryOption.feesPrice === 0 ? "FREE" : `₹${deliveryOption.feesPrice}`}`
+    
+    // For radio button auto checked
+    const isChecked = deliveryOption.id === cartItem.deliveryOptionId
+
+    // Add html tages
+    html += 
+        ` <div class="delivery-option">
+            <input type="radio"
+              ${isChecked ? 'checked' : ''}
+              class="delivery-option-input"
+              name="delivery-option-${matchingProuct}">
+            <div>
+              <div class="delivery-option-date">
+                ${dateString}
+              </div>
+              <div class="delivery-option-price">
+                ${priceString} - Shipping
+              </div>
+            </div>
+          </div>`
+  })
+  // Return to cartSlide
+  return html
 }
 
 // Call the slide function
@@ -104,7 +107,7 @@ cartSlide()
 // Add div html
 document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML
 
-// for delete 
+// For delete 
 document.querySelectorAll('.js-delete-cart').forEach((deleteHTML) =>{
   deleteHTML.addEventListener('click', () =>{
     const deleteProduct = deleteHTML.dataset.productId
