@@ -3,7 +3,10 @@ import { products } from "../data/products.js";
 // Export exter default export code using url
 import dayjs  from "https://unpkg.com/dayjs@1.11.10/esm/index.js"
 // Store delivery option
-import { delvierOptions } from "../data/deliverOptions.js";
+import { deliverOptions } from "../data/deliverOptions.js";
+
+// For create date
+// const shippingDate = dayjs()
 
 let cartSummaryHTML = ''
 // loop
@@ -18,12 +21,30 @@ function cartSlide() {
         matchingId = productData
       }
     });
+
+    // Get out of cart Delivery item id
+    const cartAllId = cartItem.deliveryOptionId
+
+    // 
+    let deliveryOption
+    deliverOptions.forEach((getId) =>{
+      if (getId.id === cartAllId) {
+        deliveryOption = getId
+        console.log(deliveryOption)
+      }
+    })
+
+    // Get the date for title
+    const today = dayjs()
+    const deliveryDate = today.add(deliveryOption.deliveryDays, 'days')
+    const dateString = deliveryDate.format('dddd, MMMM D')
+
   
     // console.log(matchingId)
     cartSummaryHTML += `
       <div class="cart-item-container js-item-id-${matchingId.id}">
             <div class="delivery-date">
-              Delivery date: Tuesday, June 21
+              Delivery date: ${dateString}
             </div>
   
             <div class="cart-item-details-grid">
@@ -68,7 +89,7 @@ function cartSlide() {
 function deliveryOptionsHTML(matchingProuct, cartItem) {
   let html = ''
 
-  delvierOptions.forEach((deliveryOption) =>{
+  deliverOptions.forEach((deliveryOption) =>{
     // Get today
     const today = dayjs()
     const deliveryDate = today.add(deliveryOption.deliveryDays, 'days')
