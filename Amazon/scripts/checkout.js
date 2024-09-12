@@ -1,4 +1,4 @@
-import { cart, removeFromCart } from "../data/cart.js";
+import { cart, removeFromCart, updateDeliveryOption } from "../data/cart.js";
 import { products } from "../data/products.js";
 // Export exter default export code using url
 import dayjs  from "https://unpkg.com/dayjs@1.11.10/esm/index.js"
@@ -13,20 +13,22 @@ let cartSummaryHTML = ''
 function cartSlide() {
   cart.forEach((cartItem) => {
     const productId = cartItem.name
-  
+   
     let matchingId;
   
     products.forEach((productData) => {
+
       if (productData.id === productId) {
         matchingId = productData
+        // console.log(matchingId)
       }
     });
 
     // Get out of cart Delivery item id
-    const cartAllId = cartItem.deliveryOptionId
-
+    const cartAllId = cartItem.deliveryOptionId 
+    console.log(cartItem.deliveryOptionId)
     // 
-    let deliveryOption
+    let deliveryOption = null
     deliverOptions.forEach((getId) =>{
       if (getId.id === cartAllId) {
         deliveryOption = getId
@@ -35,6 +37,11 @@ function cartSlide() {
     })
 
     // Get the date for title
+    if (!deliveryOption) {
+      console.error(`Delivery option not found for ID: ${cartAllId}`);
+      return; // Skip this cart item if no delivery option is found
+    }
+    
     const today = dayjs()
     const deliveryDate = today.add(deliveryOption.deliveryDays, 'days')
     const dateString = deliveryDate.format('dddd, MMMM D')
@@ -87,6 +94,7 @@ function cartSlide() {
 
 // function for get HTML for set Delivery option
 function deliveryOptionsHTML(matchingProuct, cartItem) {
+  console.log(matchingProuct)
   let html = ''
 
   deliverOptions.forEach((deliveryOption) =>{
@@ -103,7 +111,7 @@ function deliveryOptionsHTML(matchingProuct, cartItem) {
 
     // Add html tages
     html += 
-        ` <div class="delivery-option">
+      ` <div class="delivery-option js-delivery-option" data-product-id="${matchingProuct}" data-delivery-option-id="${deliveryOption.id}">
             <input type="radio"
               ${isChecked ? 'checked' : ''}
               class="delivery-option-input"
@@ -116,7 +124,7 @@ function deliveryOptionsHTML(matchingProuct, cartItem) {
                 ${priceString} - Shipping
               </div>
             </div>
-          </div>`
+        </div>`
   })
   // Return to cartSlide
   return html
@@ -136,4 +144,12 @@ document.querySelectorAll('.js-delete-cart').forEach((deleteHTML) =>{
     removeFromCart(deleteProduct)
     document.querySelector(`.js-item-id-${deleteProduct}`).remove()
    })
+})
+
+document.querySelectorAll('.js-delivery-option').
+forEach((element) => {
+  element.addEventListener('click', () => {
+    const {productId, deliveryOptionId} = element.dataset
+    updateDeliveryOption(productId, deliveryOptionId)
+  })
 })

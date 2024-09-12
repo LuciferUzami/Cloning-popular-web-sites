@@ -22,7 +22,7 @@ function saveToStorage() {
 
 export function addTocart(productName) {
   //Using find() method 
-  let existingProduct = cart.find(item => item.name === productName)
+  const existingProduct = cart.find(item => item.name === productName)
 
   // Condition
   if (!existingProduct){
@@ -53,3 +53,16 @@ export function removeFromCart(deleteProduct) {
 }
 
 
+
+export function updateDeliveryOption(productId, deliveryOptionId) {
+  let mathcingId
+
+  cart.forEach((cartItem) =>{
+    if (productId === cartItem.name){
+      mathcingId = cartItem
+    }
+  })
+  mathcingId.deliveryOptionId = deliveryOptionId
+
+  saveToStorage()
+}
